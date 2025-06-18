@@ -1,0 +1,79 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary shadow-sm">
+  <div class="container-fluid">
+     <span class="navbar-brand"><strong>PedidosYa</strong></span>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/delivery" routerLinkActive="active">Delivery</a>
+        </li>
+      </ul>
+      <a class="btn btn-outline-danger" routerLink="/login">Salir</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-container">
+  <div class="content-card">
+
+    <div class="container-fluid">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Delivery</h3>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Longitud</th>
+              <th>Latitud</th>
+              <th>Radio</th>
+              <th>Estado</th>
+              <th>Nombre Zona</th>
+              <th class="text-center">Accion</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of deliveries">
+              <td>{{ item.id }}</td>
+              <td>{{ item.longitud }}</td>
+              <td>{{ item.latitud }}</td>
+              <td>{{ item.radio }}</td>
+              <td>
+                <span class="badge" [ngClass]="{'bg-success': item.estado === 'Activo', 'bg-warning text-dark': item.estado === 'Disponible'}">
+                  {{ item.estado }}
+                </span>
+              </td>
+              <td>{{ item.nombreZona }}</td>
+              <td class="text-center">
+                <a class="btn btn-primary btn-sm me-1" [routerLink]="['/delivery/ubicacion', item.id]">📝 Editar Ubicación</a>
+                <a class="btn btn-secondary btn-sm me-1" [routerLink]="['/delivery/estado', item.id]">📝 Editar Estado</a>
+                <button class="btn btn-danger btn-sm" (click)="borrar(item.id)">🗑️ Borrar</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <nav aria-label="Page navigation">
+          <ul class="pagination">
+            <li class="page-item disabled"><a class="page-link" >«</a></li>
+            <li class="page-item active"><a class="page-link" >1</a></li>
+            <li class="page-item"><a class="page-link" >2</a></li>
+            <li class="page-item"><a class="page-link" >3</a></li>
+            <li class="page-item"><a class="page-link" >»</a></li>
+          </ul>
+        </nav>
+        <a class="btn btn-nuevo" routerLink="/delivery/nuevo">+ Nuevo</a>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,103 @@
+/* Define el color primario para reusarlo */
+:host {
+  --color-primario: #c55a11;
+}
+
+/* Contenedor principal para el fondo oscuro y centrado */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+}
+
+/* La tarjeta/panel de login */
+.login-card {
+  background-color: #fdfdfd;
+  padding: 40px 50px;
+  border-radius: 20px; /* Esquinas muy redondeadas */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 450px;
+  text-align: center;
+}
+
+.login-card h1 {
+  margin-bottom: 30px;
+  font-weight: bold;
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #555;
+}
+
+/* Estilo para los inputs en forma de píldora */
+.form-control {
+  border-radius: 50px; /* Bordes totalmente redondeados */
+  padding: 10px 20px;
+  border: 1px solid #ccc;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* Efecto de borde naranja al seleccionar un input */
+.form-control:focus {
+  border-color: var(--color-primario);
+  box-shadow: 0 0 0 3px rgba(197, 90, 17, 0.2);
+}
+
+/* Contenedor del input de contraseña para posicionar el ícono */
+.password-wrapper {
+  position: relative;
+}
+
+.password-icon {
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #888;
+}
+
+/* Botón naranja en forma de píldora */
+.btn-login {
+  width: 100%;
+  padding: 12px;
+  border-radius: 50px;
+  background-color: var(--color-primario);
+  color: white;
+  font-weight: bold;
+  border: none;
+  margin-top: 20px;
+  transition: background-color 0.3s;
+}
+
+.btn-login:hover {
+  background-color: #a54b0d; /* Naranja más oscuro */
+}
+
+/* Estilo para el pie del formulario con las líneas */
+.login-footer {
+  margin-top: 30px;
+  font-size: 14px;
+  color: #888;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.login-footer .line {
+  flex-grow: 1;
+  border: none;
+  border-top: 1px solid #ddd;
+}
