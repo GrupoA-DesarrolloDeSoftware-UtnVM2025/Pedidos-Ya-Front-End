@@ -1,12 +1,12 @@
 import { Component } from "@angular/core"
 import { CommonModule } from "@angular/common"
-import { Router, RouterLink } from "@angular/router"
+import { Router} from "@angular/router"
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from "@angular/forms"
 
 @Component({
   selector: "app-delivery-form",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: "./nuevo-delivery.component.html",
   styleUrls: ["./nuevo-delivery.component.css"],
 })
