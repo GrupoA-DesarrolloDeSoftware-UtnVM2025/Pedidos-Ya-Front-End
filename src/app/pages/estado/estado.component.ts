@@ -15,13 +15,16 @@ export class EstadoFormComponent implements OnInit {
   estadoForm: FormGroup
   error = ""
 
+  // Add the status options
+  statusOptions = ["Disponible", "En ruta"]
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private fb: FormBuilder,
   ) {
     this.estadoForm = this.fb.group({
-      status: ["", [Validators.required, Validators.minLength(2)]],
+      status: ["", [Validators.required]],
     })
   }
 
@@ -38,7 +41,7 @@ export class EstadoFormComponent implements OnInit {
 
   actualizarEstado() {
     if (this.estadoForm.invalid) {
-      this.error = "Por favor, completa todos los campos correctamente."
+      this.error = "Por favor, selecciona un estado válido."
       this.estadoForm.markAllAsTouched()
       return
     }
