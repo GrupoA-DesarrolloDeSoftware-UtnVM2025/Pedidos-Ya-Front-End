@@ -2,13 +2,13 @@ import { Routes } from '@angular/router';
 
 // ... (tus otros imports)
 
-import { DeliveryFormComponent } from './Vistas/nuevo-delivery/nuevo-delivery.component';
+import { DeliveryFormComponent } from './pages/nuevo-delivery/nuevo-delivery.component';
 // ▼▼▼ 1. IMPORTA EL NUEVO COMPONENTE ▼▼▼
-import { EstadoFormComponent } from './Vistas/estado/estado.component';
-import { RegisterComponent } from './Vistas/register/register.component';
-import { LoginComponent } from './Vistas/login/login.component';
-import { DeliveryComponent } from './Vistas/delivery/delivery.component';
-import { UbicacionFormComponent } from './Vistas/ubicacion/ubicacion.component';
+import { EstadoFormComponent } from './pages/estado/estado.component';
+import { RegisterComponent } from './pages/register/register.component';
+import { LoginComponent } from './pages/login/login.component';
+import { DeliveryComponent } from './pages/delivery/delivery.component';
+import { UbicacionFormComponent } from './pages/ubicacion/ubicacion.component';
 
 export const routes: Routes = [
   // ... (rutas de login, register)
