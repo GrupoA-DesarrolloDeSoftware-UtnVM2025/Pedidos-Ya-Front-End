@@ -17,14 +17,35 @@
 <div class="form-container">
   <div class="form-card">
     <h3 class="mb-4">Editar Estado</h3>
-    <form (ngSubmit)="actualizarEstado()">
+
+    @if (error) {
+      <div class="alert alert-danger">{{ error }}</div>
+    }
+
+    <form [formGroup]="estadoForm" (ngSubmit)="actualizarEstado()">
       <div class="mb-3">
-        <label for="estado" class="form-label">Estado *</label>
-        <input type="text" id="estado" name="estado" class="form-control" placeholder="Ej: Disponible" [(ngModel)]="estado" required>
+        <label for="status" class="form-label">Estado *</label>
+        <input
+          type="text"
+          id="status"
+          class="form-control"
+          formControlName="status"
+          placeholder="Ej: Disponible"
+          [class.is-invalid]="status?.invalid && status?.touched">
+        @if (status?.invalid && status?.touched) {
+          <div class="invalid-feedback">
+            @if (status?.errors?.['required']) {
+              <small>El estado es obligatorio.</small>
+            }
+            @if (status?.errors?.['minlength']) {
+              <small>El estado debe tener al menos 2 caracteres.</small>
+            }
+          </div>
+        }
       </div>
       <div class="d-flex justify-content-end mt-4">
         <button type="button" class="btn btn-secondary me-2" (click)="cancelar()">Cancelar</button>
-        <button type="submit" class="btn btn-primary">Actualizar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="estadoForm.invalid">Actualizar</button>
       </div>
     </form>
   </div>
