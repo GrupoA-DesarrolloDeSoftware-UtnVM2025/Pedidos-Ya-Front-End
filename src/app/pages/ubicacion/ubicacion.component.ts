@@ -1,12 +1,12 @@
 import { Component, type OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from "@angular/forms"
-import { Router, ActivatedRoute, RouterLink} from "@angular/router"
+import { Router, ActivatedRoute} from "@angular/router"
 
 @Component({
   selector: "app-ubicacion-form",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: "./ubicacion.component.html",
   styleUrls: ["./ubicacion.component.css"],
 })
