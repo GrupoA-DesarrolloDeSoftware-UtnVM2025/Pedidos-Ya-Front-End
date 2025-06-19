@@ -17,20 +17,67 @@
 <div class="form-container">
   <div class="form-card">
     <h3 class="mb-4">Editar Ubicación</h3>
-    <form (ngSubmit)="actualizarUbicacion()">
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <label for="longitud" class="form-label">Longitud *</label>
-          <input type="text" class="form-control" id="longitud" name="longitud" placeholder="Ej: -58.417" [(ngModel)]="ubicacion.longitud" required>
-        </div>
-        <div class="col-md-6 mb-3">
-          <label for="latitud" class="form-label">Latitud *</label>
-          <input type="text" class="form-control" id="latitud" name="latitud" placeholder="Ej: -34.611" [(ngModel)]="ubicacion.latitud" required>
+
+    @if (error) {
+      <div class="alert alert-danger">{{ error }}</div>
+    }
+
+    <form [formGroup]="ubicacionForm" (ngSubmit)="actualizarUbicacion()">
+      <div formGroupName="location">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="latitude" class="form-label">Latitud *</label>
+            <input
+              type="number"
+              step="any"
+              class="form-control"
+              id="latitude"
+              formControlName="latitude"
+              placeholder="Ej: -34.611"
+              [class.is-invalid]="latitude?.invalid && latitude?.touched">
+            @if (latitude?.invalid && latitude?.touched) {
+              <div class="invalid-feedback">
+                @if (latitude?.errors?.['required']) {
+                  <small>Latitud es obligatoria.</small>
+                }
+                @if (latitude?.errors?.['min']) {
+                  <small>Latitud debe ser mayor o igual a -90.</small>
+                }
+                @if (latitude?.errors?.['max']) {
+                  <small>Latitud debe ser menor o igual a 90.</small>
+                }
+              </div>
+            }
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="longitude" class="form-label">Longitud *</label>
+            <input
+              type="number"
+              step="any"
+              class="form-control"
+              id="longitude"
+              formControlName="longitude"
+              placeholder="Ej: -58.417"
+              [class.is-invalid]="longitude?.invalid && longitude?.touched">
+            @if (longitude?.invalid && longitude?.touched) {
+              <div class="invalid-feedback">
+                @if (longitude?.errors?.['required']) {
+                  <small>Longitud es obligatoria.</small>
+                }
+                @if (longitude?.errors?.['min']) {
+                  <small>Longitud debe ser mayor o igual a -180.</small>
+                }
+                @if (longitude?.errors?.['max']) {
+                  <small>Longitud debe ser menor o igual a 180.</small>
+                }
+              </div>
+            }
+          </div>
         </div>
       </div>
       <div class="d-flex justify-content-end mt-4">
         <button type="button" class="btn btn-secondary me-2" (click)="cancelar()">Cancelar</button>
-        <button type="submit" class="btn btn-primary">Actualizar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="ubicacionForm.invalid">Actualizar</button>
       </div>
     </form>
   </div>
