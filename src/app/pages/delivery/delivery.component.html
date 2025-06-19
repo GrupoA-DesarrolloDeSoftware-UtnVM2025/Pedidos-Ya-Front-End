@@ -7,7 +7,7 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          
+
         </li>
         <li class="nav-item">
           <a class="nav-link" routerLink="/delivery" routerLinkActive="active">Delivery</a>
@@ -40,23 +40,25 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of deliveries">
-              <td>{{ item.id }}</td>
-              <td>{{ item.longitud }}</td>
-              <td>{{ item.latitud }}</td>
-              <td>{{ item.radio }}</td>
-              <td>
-                <span class="badge" [ngClass]="{'bg-success': item.estado === 'Activo', 'bg-warning text-dark': item.estado === 'Disponible'}">
-                  {{ item.estado }}
-                </span>
-              </td>
-              <td>{{ item.nombreZona }}</td>
-              <td class="text-center">
-                <a class="btn btn-primary btn-sm me-1" [routerLink]="['/delivery/ubicacion', item.id]">📝 Editar Ubicación</a>
-                <a class="btn btn-secondary btn-sm me-1" [routerLink]="['/delivery/estado', item.id]">📝 Editar Estado</a>
-                <button class="btn btn-danger btn-sm" (click)="borrar(item.id)">🗑️ Borrar</button>
-              </td>
-            </tr>
+            @for (item of deliveries; track item.id) {
+              <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.longitud }}</td>
+                <td>{{ item.latitud }}</td>
+                <td>{{ item.radio }}</td>
+                <td>
+                  <span class="badge" [ngClass]="{'bg-success': item.estado === 'Activo', 'bg-warning text-dark': item.estado === 'Disponible'}">
+                    {{ item.estado }}
+                  </span>
+                </td>
+                <td>{{ item.nombreZona }}</td>
+                <td class="text-center">
+                  <a class="btn btn-primary btn-sm me-1" [routerLink]="['/delivery/ubicacion', item.id]">📝 Editar Ubicación</a>
+                  <a class="btn btn-secondary btn-sm me-1" [routerLink]="['/delivery/estado', item.id]">📝 Editar Estado</a>
+                  <button class="btn btn-danger btn-sm" (click)="borrar(item.id)">🗑️ Borrar</button>
+                </td>
+              </tr>
+            }
           </tbody>
         </table>
       </div>
