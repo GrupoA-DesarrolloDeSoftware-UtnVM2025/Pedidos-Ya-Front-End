@@ -32,7 +32,7 @@ export class LoginComponent {
     })
   }
 
-  // Getters para acceder a los controles del formulario  
+  // Getters para acceder a los controles del formulario
   get email() {
     return this.loginForm.get("email")
   }
@@ -45,7 +45,7 @@ export class LoginComponent {
     this.showPassword = !this.showPassword
   }
   // Método para iniciar sesión
-  async iniciarSesion(): Promise<void> {
+  async logIn(): Promise<void> {
     if (this.loginForm.invalid) {
       this.error = "Por favor, completa todos los campos correctamente."
       this.loginForm.markAllAsTouched()
@@ -54,7 +54,7 @@ export class LoginComponent {
 
     this.isLoading = true
     this.error = ""
-    // Intentar iniciar sesión con las credenciales 
+    // Intentar iniciar sesión con las credenciales
     try {
       const credentials = this.loginForm.value
       await this.authService.login(credentials)
