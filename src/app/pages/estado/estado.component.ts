@@ -5,40 +5,40 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from "@angula
 import {  Router, ActivatedRoute} from "@angular/router"
 import { DeliveryService, UpdateDeliveryStatusDto } from "../../services/api.service"
 
-//Importar componente del estado del delivery 
+//Importar componente del estado del delivery
 @Component({
-  selector: "app-estado-form", 
+  selector: "app-estado-form",
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule ],
   templateUrl: "./estado.component.html",
   styleUrls: ["./estado.component.css"],
 })
 
-//Clase para obtener el estado actual de un delivery 
+//Clase para obtener el estado actual de un delivery
 export class EstadoFormComponent implements OnInit {
   deliveryId: string | null = null
   estadoForm: FormGroup
   error = ""
   isLoading = false
 
-  //Estados disponibles 
-  statusOptions = ["Disponible", "En ruta", "Ocupado", "desconectado"]
+  //Estados disponibles
+  statusOptions = ["available", "in route", "occupied", "disconnected"]
 
-  //Constructor para navegar entre rutas y crear el formulario de cambio de estado 
+  //Constructor para navegar entre rutas y crear el formulario de cambio de estado
   constructor(
       private router: Router,
       private route: ActivatedRoute,
       private fb: FormBuilder,
       private deliveryService: DeliveryService,
 
-    //Creacion del formulario con el campo "status"  
+    //Creacion del formulario con el campo "status"
   ) {
     this.estadoForm = this.fb.group({
       status: ["", [Validators.required]],
     })
   }
 
-  //Metodo para acceder facilmente al formulario 
+  //Metodo para acceder facilmente al formulario
   get status() {
     return this.estadoForm.get("status")
   }
@@ -49,7 +49,7 @@ export class EstadoFormComponent implements OnInit {
       await this.loadDeliveryData()
     }
   }
-  //Se obtiene el id del delivery y se le establece el valor status 
+  //Se obtiene el id del delivery y se le establece el valor status
   async loadDeliveryData() {
     if (!this.deliveryId) return
 
@@ -62,8 +62,8 @@ export class EstadoFormComponent implements OnInit {
       this.error = error.message
     }
   }
-  //Si el estado seleccionado no es valido se muestra un error y se solicita seleccione uno nuevo 
-  async actualizarEstado() {
+  //Si el estado seleccionado no es valido se muestra un error y se solicita seleccione uno nuevo
+  async updateDeliveryStatus() {
     if (this.estadoForm.invalid) {
       this.error = "Por favor, selecciona un estado válido."
       this.estadoForm.markAllAsTouched()
@@ -92,7 +92,7 @@ export class EstadoFormComponent implements OnInit {
     }
   }
 
-  cancelar() {
+  cancel() {
     this.router.navigate(["/delivery"])
   }
 }
