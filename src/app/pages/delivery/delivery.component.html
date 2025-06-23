@@ -61,9 +61,9 @@
                                         <td>
                       <span class="badge" [ngClass]="{
                         'bg-success': item.status === 'available',
-                        'bg-warning text-dark': item.status === 'En ruta',
-                        'bg-danger': item.status === 'Ocupado',
-                        'bg-secondary': item.status === 'desconectado'
+                        'bg-warning text-dark': item.status === 'in route',
+                        'bg-danger': item.status === 'occupied',
+                        'bg-secondary': item.status === 'disconnected'
                       }">
                         {{ item.status }}
                       </span>
