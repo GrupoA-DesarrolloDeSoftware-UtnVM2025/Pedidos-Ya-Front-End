@@ -124,9 +124,9 @@ export class DeliveryComponent implements OnInit {
   // Método para cambiar la cantidad de elementos por página
   async onPageSizeChange(event: Event) {
     const target = event.target as HTMLSelectElement
-    const newLimit = Number.parseInt(target.value)
+    //const newLimit = Number.parseInt(target.value)
 
-    this.limit = newLimit
+    this.limit = Number.parseInt(target.value)
     await this.loadDeliveries(1) // Reinicia en la primera página
   }
 
