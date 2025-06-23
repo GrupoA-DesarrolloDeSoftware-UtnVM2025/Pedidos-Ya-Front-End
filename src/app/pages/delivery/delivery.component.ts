@@ -62,7 +62,7 @@ export class DeliveryComponent implements OnInit {
       if (this.currentPage > this.totalPages) {
         this.currentPage = this.totalPages
       }
-      
+
     } catch (error: any) {
       // Manejo de errores
       console.error("Error in loadDeliveries:", error)
@@ -75,7 +75,7 @@ export class DeliveryComponent implements OnInit {
   }
 
   // Método para eliminar un delivery
-  async borrar(id: number) {
+  async deleteDelivery(id: number) {
     // Confirma la acción con el usuario
     if (!confirm("¿Estás seguro de que quieres eliminar este delivery?")) {
       return
@@ -125,7 +125,7 @@ export class DeliveryComponent implements OnInit {
   async onPageSizeChange(event: Event) {
     const target = event.target as HTMLSelectElement
     const newLimit = Number.parseInt(target.value)
-    
+
     this.limit = newLimit
     await this.loadDeliveries(1) // Reinicia en la primera página
   }
