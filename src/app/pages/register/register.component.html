@@ -6,7 +6,7 @@
             <div class="alert alert-danger">{{ error }}</div>
         }
 
-        <form [formGroup]="registerForm" (ngSubmit)="crearCuenta()">
+        <form [formGroup]="registerForm" (ngSubmit)="registerUser()">
             <div class="form-group">
                 <label for="email">Email *</label>
                 <input
