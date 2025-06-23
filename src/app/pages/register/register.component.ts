@@ -45,7 +45,7 @@ export class RegisterComponent {
     this.showPassword = !this.showPassword
   }
   // Método para crear una nueva cuenta de usuario
-  async crearCuenta(): Promise<void> {
+  async registerUser(): Promise<void> {
     if (this.registerForm.invalid) {
       this.error = "Por favor, completa todos los campos correctamente."
       this.registerForm.markAllAsTouched()
@@ -59,7 +59,7 @@ export class RegisterComponent {
       const userData = this.registerForm.value
       await this.authService.register(userData)
 
-      // Redirigir al login después del registro 
+      // Redirigir al login después del registro
       this.router.navigate(["/login"])
     } catch (error: any) {
       this.error = error.message || "Error al crear la cuenta"
