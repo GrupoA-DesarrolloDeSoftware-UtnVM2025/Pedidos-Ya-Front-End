@@ -3,163 +3,179 @@ import { axiosService } from "./axiosClient"
 import { config } from "../config/env"
 
 export interface LoginRequest {
-    email: string
-    password: string
+  email: string
+  password: string
 }
 
 export interface AuthResponse {
-    accessToken: string
-    refreshToken: string
+  accessToken: string
+  refreshToken: string
 }
 
 export interface RegisterRequest {
-    email: string
-    password: string
+  email: string
+  password: string
 }
 
 export interface RefreshTokenRequest {
-    refreshToken: string
+  refreshToken: string
 }
 
 @Injectable({
-    providedIn: "root",
+  providedIn: "root",
 })
 export class AuthService {
-    constructor() {}
+  private readonly TOKEN_EXPIRY_TIME = 15 * 60 * 1000 // 15 minutes in milliseconds
+  private readonly ACCESS_TOKEN_KEY = "access_token"
+  private readonly REFRESH_TOKEN_KEY = "refresh_token"
+  private readonly TOKEN_CREATED_AT_KEY = "token_created_at"
 
-    async login(credentials: LoginRequest): Promise<AuthResponse> {
-        try {
-            const response = await axiosService.post<AuthResponse>(config.urls.logIn, credentials)
+  constructor() {}
 
-            // Guardar tokens en localStorage
-            localStorage.setItem("access_token", response.data.accessToken)
-            localStorage.setItem("refresh_token", response.data.refreshToken)
+  async login(credentials: LoginRequest): Promise<AuthResponse> {
+    try {
+      const response = await axiosService.post<AuthResponse>(config.urls.logIn, credentials)
 
-            return response.data
-        } catch (error: any) {
-            console.error("Error en login:", error)
-            throw new Error(error.response?.data?.message || "Error al iniciar sesión")
-        }
+      // Save tokens and creation timestamp
+      this.saveTokens(response.data.accessToken, response.data.refreshToken)
+
+      return response.data
+    } catch (error: any) {
+      console.error("Error en login:", error)
+      throw new Error(error.response?.data?.message || "Error al iniciar sesión")
+    }
+  }
+
+  async register(userData: RegisterRequest): Promise<AuthResponse> {
+    try {
+      const response = await axiosService.post<AuthResponse>(config.urls.register, userData)
+
+      // Save tokens and creation timestamp
+      this.saveTokens(response.data.accessToken, response.data.refreshToken)
+
+      return response.data
+    } catch (error: any) {
+      console.error("Error en registro:", error)
+      throw new Error(error.response?.data?.message || "Error al registrar usuario")
+    }
+  }
+
+  async refreshToken(): Promise<AuthResponse> {
+    try {
+      const refreshToken = localStorage.getItem(this.REFRESH_TOKEN_KEY)
+      if (!refreshToken) {
+        throw new Error("No hay refresh token disponible")
+      }
+
+      console.log("Refreshing access token...")
+
+      // Send refresh token in request body
+      const response = await axiosService.post<AuthResponse>(config.urls.refreshAccessToken, {
+        refreshToken: refreshToken,
+      })
+
+      // Save new tokens and update creation timestamp
+      this.saveTokens(response.data.accessToken, response.data.refreshToken)
+
+      console.log("Access token refreshed successfully")
+
+      return response.data
+    } catch (error: any) {
+      console.error("Error al refrescar token:", error)
+      this.logout() // Si falla el refresh, hacer logout
+      throw new Error("Sesión expirada")
+    }
+  }
+
+  // Check if token needs refresh and refresh if necessary
+  async checkAndRefreshTokenIfNeeded(): Promise<boolean> {
+    if (!this.isAuthenticated()) {
+      return false
     }
 
-    async register(userData: RegisterRequest): Promise<AuthResponse> {
-        try {
-            const response = await axiosService.post<AuthResponse>(config.urls.register, userData)
-
-            // Guardar tokens en localStorage después del registro
-            localStorage.setItem("access_token", response.data.accessToken)
-            localStorage.setItem("refresh_token", response.data.refreshToken)
-
-            return response.data
-        } catch (error: any) {
-            console.error("Error en registro:", error)
-            throw new Error(error.response?.data?.message || "Error al registrar usuario")
-        }
+    if (this.isTokenExpired()) {
+      try {
+        await this.refreshToken()
+        return true
+      } catch (error) {
+        console.error("Token refresh failed:", error)
+        return false
+      }
     }
 
-    async refreshToken(): Promise<AuthResponse> {
-        try {
-            const refreshToken = localStorage.getItem("refresh_token")
-            if (!refreshToken) {
-                throw new Error("No hay refresh token disponible")
-            }
+    return true
+  }
 
-            // Send refresh token in request body
-            const response = await axiosService.post<AuthResponse>(config.urls.refreshAccessToken, {
-                refreshToken: refreshToken,
-            })
+  // Save tokens with current timestamp
+  private saveTokens(accessToken: string, refreshToken: string): void {
+    const now = new Date().getTime()
+    localStorage.setItem(this.ACCESS_TOKEN_KEY, accessToken)
+    localStorage.setItem(this.REFRESH_TOKEN_KEY, refreshToken)
+    localStorage.setItem(this.TOKEN_CREATED_AT_KEY, now.toString())
+  }
 
-            // Actualizar tokens
-            localStorage.setItem("access_token", response.data.accessToken)
-            if (response.data.refreshToken) {
-                localStorage.setItem("refresh_token", response.data.refreshToken)
-            }
-
-            return response.data
-        } catch (error: any) {
-            console.error("Error al refrescar token:", error)
-            this.logout() // Si falla el refresh, hacer logout
-            throw new Error("Sesión expirada")
-        }
+  // Check if 15 minutes have passed since token creation
+  private isTokenExpired(): boolean {
+    const tokenCreatedAt = localStorage.getItem(this.TOKEN_CREATED_AT_KEY)
+    if (!tokenCreatedAt) {
+      return true // If no timestamp, consider expired
     }
 
-    logout(): void {
-        localStorage.removeItem("access_token")
-        localStorage.removeItem("refresh_token")
+    const createdTime = Number.parseInt(tokenCreatedAt)
+    const currentTime = new Date().getTime()
+    const timeDifference = currentTime - createdTime
+
+    console.log(`Token age: ${Math.floor(timeDifference / 1000 / 60)} minutes`)
+
+    return timeDifference >= this.TOKEN_EXPIRY_TIME
+  }
+
+  // Get remaining time before token expires (in minutes)
+  getTokenRemainingTime(): number {
+    const tokenCreatedAt = localStorage.getItem(this.TOKEN_CREATED_AT_KEY)
+    if (!tokenCreatedAt) {
+      return 0
     }
 
-    isAuthenticated(): boolean {
-        const token = localStorage.getItem("access_token")
-        if (!token) return false
+    const createdTime = Number.parseInt(tokenCreatedAt)
+    const currentTime = new Date().getTime()
+    const timeDifference = currentTime - createdTime
+    const remainingTime = this.TOKEN_EXPIRY_TIME - timeDifference
 
-        // Check if token is expired (optional - you can add JWT decode logic here)
-        try {
-            const payload = JSON.parse(atob(token.split(".")[1]))
-            const currentTime = Math.floor(Date.now() / 1000)
+    return Math.max(0, Math.floor(remainingTime / 1000 / 60)) // Return minutes
+  }
 
-            // If token is expired, try to refresh it
-            if (payload.exp && payload.exp < currentTime) {
-                console.log("Access token is expired")
-                return false
-            }
+  logout(): void {
+    localStorage.removeItem(this.ACCESS_TOKEN_KEY)
+    localStorage.removeItem(this.REFRESH_TOKEN_KEY)
+    localStorage.removeItem(this.TOKEN_CREATED_AT_KEY)
+  }
 
-            return true
-        } catch (error) {
-            console.error("Error checking token validity:", error)
-            return false
-        }
+  isAuthenticated(): boolean {
+    const token = localStorage.getItem(this.ACCESS_TOKEN_KEY)
+    const tokenCreatedAt = localStorage.getItem(this.TOKEN_CREATED_AT_KEY)
+    return !!(token && tokenCreatedAt)
+  }
+
+  getAccessToken(): string | null {
+    return localStorage.getItem(this.ACCESS_TOKEN_KEY)
+  }
+
+  getRefreshToken(): string | null {
+    return localStorage.getItem(this.REFRESH_TOKEN_KEY)
+  }
+
+  // Decodificar JWT para obtener información del usuario
+  getUserFromToken(): any {
+    const token = this.getAccessToken()
+    if (!token) return null
+
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]))
+      return payload
+    } catch (error) {
+      console.error("Error al decodificar token:", error)
+      return null
     }
-
-    getAccessToken(): string | null {
-        return localStorage.getItem("access_token")
-    }
-
-    getRefreshToken(): string | null {
-        return localStorage.getItem("refresh_token")
-    }
-
-    // Check if access token is about to expire (within 2 minutes)
-    isTokenExpiringSoon(): boolean {
-        const token = this.getAccessToken()
-        if (!token) return true
-
-        try {
-            const payload = JSON.parse(atob(token.split(".")[1]))
-            const currentTime = Math.floor(Date.now() / 1000)
-            const expirationTime = payload.exp
-
-            // Check if token expires within 2 minutes (120 seconds)
-            return expirationTime - currentTime < 120
-        } catch (error) {
-            console.error("Error checking token expiration:", error)
-            return true
-        }
-    }
-
-    // Proactively refresh token if it's about to expire
-    async checkAndRefreshToken(): Promise<void> {
-        if (this.isTokenExpiringSoon()) {
-            try {
-                await this.refreshToken()
-                console.log("Token refreshed proactively")
-            } catch (error) {
-                console.error("Proactive token refresh failed:", error)
-                // Don't throw error here, let the interceptor handle it
-            }
-        }
-    }
-
-    // Decodificar JWT para obtener información del usuario (opcional)
-    getUserFromToken(): any {
-        const token = this.getAccessToken()
-        if (!token) return null
-
-        try {
-            const payload = JSON.parse(atob(token.split(".")[1]))
-            return payload
-        } catch (error) {
-            console.error("Error al decodificar token:", error)
-            return null
-        }
-    }
+  }
 }

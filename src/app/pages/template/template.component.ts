@@ -12,9 +12,9 @@ import { AuthService } from "../../services/auth.service"
 })
 export class TemplateComponent {
   constructor(
-      private globalStatusService: GlobalStatusService,
-      private authService: AuthService,
-      private router: Router,
+    private globalStatusService: GlobalStatusService,
+    private authService: AuthService,
+    private router: Router,
   ) {}
 
   isLoading(): boolean {
