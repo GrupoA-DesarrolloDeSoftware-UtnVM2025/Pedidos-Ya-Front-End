@@ -1,12 +1,13 @@
-import { Component, type OnInit } from "@angular/core"
+import { Component, OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from "@angular/forms"
 import { Router, ActivatedRoute} from "@angular/router"
+import { DeliveryService, UpdateDeliveryLocationDto } from "../../services/api.service"
 
 @Component({
   selector: "app-ubicacion-form",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule ],
   templateUrl: "./ubicacion.component.html",
   styleUrls: ["./ubicacion.component.css"],
 })
@@ -14,11 +15,13 @@ export class UbicacionFormComponent implements OnInit {
   deliveryId: string | null = null
   ubicacionForm: FormGroup
   error = ""
+  isLoading = false
 
   constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    private fb: FormBuilder,
+      private router: Router,
+      private route: ActivatedRoute,
+      private fb: FormBuilder,
+      private deliveryService: DeliveryService,
   ) {
     this.ubicacionForm = this.fb.group({
       location: this.fb.group({
@@ -39,22 +42,60 @@ export class UbicacionFormComponent implements OnInit {
     return this.ubicacionForm.get("location.longitude")
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.deliveryId = this.route.snapshot.paramMap.get("id")
-    console.log("Editando ubicación para el ID:", this.deliveryId)
-    // En una app real, usarías este ID para cargar la longitud y latitud actuales desde la API
+    if (this.deliveryId) {
+      await this.loadDeliveryData()
+    }
   }
 
-  actualizarUbicacion() {
+  async loadDeliveryData() {
+    if (!this.deliveryId) return
+
+    try {
+      const delivery = await this.deliveryService.getDeliveryById(Number(this.deliveryId))
+      this.ubicacionForm.patchValue({
+        location: {
+          latitude: delivery.location.latitude,
+          longitude: delivery.location.longitude,
+        },
+      })
+    } catch (error: any) {
+      this.error = error.message
+    }
+  }
+
+  async actualizarUbicacion() {
     if (this.ubicacionForm.invalid) {
       this.error = "Por favor, completa todos los campos correctamente."
       this.ubicacionForm.markAllAsTouched()
       return
     }
 
-    console.log(`Actualizando ubicación para ID: ${this.deliveryId} a`, this.ubicacionForm.value)
-    // Aquí llamarías a la API para guardar los cambios
-    this.router.navigate(["/delivery"])
+    if (!this.deliveryId) {
+      this.error = "ID de delivery no válido."
+      return
+    }
+
+    this.isLoading = true
+    this.error = ""
+
+    try {
+      const formValue = this.ubicacionForm.value
+      const locationData: UpdateDeliveryLocationDto = {
+        location: {
+          latitude: Number(formValue.location.latitude),
+          longitude: Number(formValue.location.longitude),
+        },
+      }
+
+      await this.deliveryService.updateLocation(Number(this.deliveryId), locationData)
+      this.router.navigate(["/delivery"])
+    } catch (error: any) {
+      this.error = error.message
+    } finally {
+      this.isLoading = false
+    }
   }
 
   cancelar() {

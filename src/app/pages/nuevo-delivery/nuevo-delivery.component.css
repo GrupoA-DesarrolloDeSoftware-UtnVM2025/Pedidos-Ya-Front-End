@@ -3,8 +3,7 @@
   justify-content: center;
   align-items: center;
   padding-top: 50px;
-  min-height: calc(100vh - 56px); /* Altura mínima para centrar verticalmente */
-  /* Hemos eliminado la línea "background-color" para que se vea el fondo global */
+  min-height: calc(100vh - 56px);
 }
 
 .form-card {
