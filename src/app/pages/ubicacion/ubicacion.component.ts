@@ -65,7 +65,7 @@ export class UbicacionFormComponent implements OnInit {
     }
   }
 
-  async actualizarUbicacion() {
+  async updateLocation() {
     if (this.ubicacionForm.invalid) {
       this.error = "Por favor, completa todos los campos correctamente."
       this.ubicacionForm.markAllAsTouched()
@@ -98,7 +98,7 @@ export class UbicacionFormComponent implements OnInit {
     }
   }
 
-  cancelar() {
+  cancel() {
     this.router.navigate(["/delivery"])
   }
 }
