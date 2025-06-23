@@ -151,7 +151,7 @@ export class DeliveryService {
 
   async deleteDelivery(id: number): Promise<void> {
     try {
-      await axiosService.delete(`${config.urls.deleteDelivery}/${id}`)
+      await axiosService.delete(config.urls.deleteDelivery(id))
     } catch (error: any) {
       console.error("Error al eliminar delivery:", error)
       throw new Error(error.response?.data?.message || "Error al eliminar el delivery")
