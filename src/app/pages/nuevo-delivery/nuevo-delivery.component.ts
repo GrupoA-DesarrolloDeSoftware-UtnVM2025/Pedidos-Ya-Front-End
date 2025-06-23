@@ -59,8 +59,8 @@ export class DeliveryFormComponent {
     return this.deliveryForm.get("radius")
   }
 
-  // Método que se ejecuta al enviar el formulario para crear un nuevo delivery
-  async crearDelivery() {
+  // Metodo que se ejecuta al enviar el formulario para crear un nuevo delivery
+  async createDelivery() {
     // Si el formulario es inválido, se muestra un mensaje de error
     if (this.deliveryForm.invalid) {
       this.error = "Por favor, completa todos los campos correctamente."
@@ -99,7 +99,7 @@ export class DeliveryFormComponent {
     }
   }
 
-  // Método para cancelar y volver al listado sin guardar
+  // Metodo para cancelar y volver al listado sin guardar
   cancelar() {
     this.router.navigate(["/delivery"])
   }
