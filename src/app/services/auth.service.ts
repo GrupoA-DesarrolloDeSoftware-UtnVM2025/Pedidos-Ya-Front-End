@@ -29,8 +29,12 @@ export class AuthService {
   private readonly ACCESS_TOKEN_KEY = "access_token"
   private readonly REFRESH_TOKEN_KEY = "refresh_token"
   private readonly TOKEN_CREATED_AT_KEY = "token_created_at"
+  private tokenCheckInterval: any = null
 
-  constructor() {}
+  constructor() {
+    // Start periodic token checking when service is initialized
+    this.startPeriodicTokenCheck()
+  }
 
   async login(credentials: LoginRequest): Promise<AuthResponse> {
     try {
@@ -38,6 +42,9 @@ export class AuthService {
 
       // Save tokens and creation timestamp
       this.saveTokens(response.data.accessToken, response.data.refreshToken)
+
+      // Start periodic checking after login
+      this.startPeriodicTokenCheck()
 
       return response.data
     } catch (error: any) {
@@ -52,6 +59,9 @@ export class AuthService {
 
       // Save tokens and creation timestamp
       this.saveTokens(response.data.accessToken, response.data.refreshToken)
+
+      // Start periodic checking after register
+      this.startPeriodicTokenCheck()
 
       return response.data
     } catch (error: any) {
@@ -70,8 +80,8 @@ export class AuthService {
       console.log("Refreshing access token...")
 
       // Send refresh token in request body
-      const response = await axiosService.post<AuthResponse>(config.urls.refreshAccessToken, {
-        refreshToken: refreshToken,
+      const response = await axiosService.get<AuthResponse>(config.urls.refreshAccessToken, {
+        headers: {'refresh-token': refreshToken}
       })
 
       // Save new tokens and update creation timestamp
@@ -84,6 +94,41 @@ export class AuthService {
       console.error("Error al refrescar token:", error)
       this.logout() // Si falla el refresh, hacer logout
       throw new Error("Sesión expirada")
+    }
+  }
+
+  // Start periodic token checking every 5 minutes
+  private startPeriodicTokenCheck(): void {
+    // Clear existing interval if any
+    if (this.tokenCheckInterval) {
+      clearInterval(this.tokenCheckInterval)
+    }
+
+    // Check every 5 minutes (300,000 ms)
+    this.tokenCheckInterval = setInterval(
+      () => {
+        if (this.isAuthenticated()) {
+          const remainingTime = this.getTokenRemainingTime()
+          console.log(`Token check: ${remainingTime} minutes remaining`)
+
+          // If token expires in less than 2 minutes, refresh it proactively
+          if (remainingTime <= 2) {
+            console.log("Token expiring soon, refreshing proactively...")
+            this.refreshToken().catch((error) => {
+              console.error("Periodic token refresh failed:", error)
+            })
+          }
+        }
+      },
+      5 * 60 * 1000,
+    ) // 5 minutes
+  }
+
+  // Stop periodic token checking
+  private stopPeriodicTokenCheck(): void {
+    if (this.tokenCheckInterval) {
+      clearInterval(this.tokenCheckInterval)
+      this.tokenCheckInterval = null
     }
   }
 
@@ -112,6 +157,8 @@ export class AuthService {
     localStorage.setItem(this.ACCESS_TOKEN_KEY, accessToken)
     localStorage.setItem(this.REFRESH_TOKEN_KEY, refreshToken)
     localStorage.setItem(this.TOKEN_CREATED_AT_KEY, now.toString())
+
+    console.log(`Tokens saved at: ${new Date(now).toLocaleTimeString()}`)
   }
 
   // Check if 15 minutes have passed since token creation
@@ -124,8 +171,6 @@ export class AuthService {
     const createdTime = Number.parseInt(tokenCreatedAt)
     const currentTime = new Date().getTime()
     const timeDifference = currentTime - createdTime
-
-    console.log(`Token age: ${Math.floor(timeDifference / 1000 / 60)} minutes`)
 
     return timeDifference >= this.TOKEN_EXPIRY_TIME
   }
@@ -145,7 +190,21 @@ export class AuthService {
     return Math.max(0, Math.floor(remainingTime / 1000 / 60)) // Return minutes
   }
 
+  // Get token creation time as readable string
+  getTokenCreatedAt(): string {
+    const tokenCreatedAt = localStorage.getItem(this.TOKEN_CREATED_AT_KEY)
+    if (!tokenCreatedAt) {
+      return "Unknown"
+    }
+
+    const createdTime = Number.parseInt(tokenCreatedAt)
+    return new Date(createdTime).toLocaleString()
+  }
+
   logout(): void {
+    // Stop periodic checking
+    this.stopPeriodicTokenCheck()
+
     localStorage.removeItem(this.ACCESS_TOKEN_KEY)
     localStorage.removeItem(this.REFRESH_TOKEN_KEY)
     localStorage.removeItem(this.TOKEN_CREATED_AT_KEY)
@@ -171,7 +230,8 @@ export class AuthService {
     if (!token) return null
 
     try {
-      return (JSON.parse(atob(token.split(".")[1])))
+      const payload = JSON.parse(atob(token.split(".")[1]))
+      return payload
     } catch (error) {
       console.error("Error al decodificar token:", error)
       return null
