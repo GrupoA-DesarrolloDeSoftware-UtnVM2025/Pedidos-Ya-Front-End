@@ -1,114 +1,121 @@
 <div class="form-container">
-  <div class="form-card">
-    <h3 class="mb-4">Nuevo Delivery</h3>
+    <div class="form-card">
+        <h3 class="mb-4">Nuevo Delivery</h3>
 
-    @if (error) {
-      <div class="alert alert-danger">{{ error }}</div>
-    }
+        @if (error) {
+            <div class="alert alert-danger">{{ error }}</div>
+        }
 
-    <form [formGroup]="deliveryForm" (ngSubmit)="crearDelivery()">
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <label for="personaId" class="form-label">Persona ID *</label>
-          <input
-            type="number"
-            class="form-control"
-            id="personaId"
-            formControlName="personaId"
-            placeholder="Ej: 1"
-            [class.is-invalid]="personaId?.invalid && personaId?.touched">
-          @if (personaId?.invalid && personaId?.touched) {
-            <div class="invalid-feedback">
-              @if (personaId?.errors?.['required']) {
-                <small>Persona ID es obligatorio.</small>
-              }
-              @if (personaId?.errors?.['min']) {
-                <small>Persona ID debe ser mayor a 0.</small>
-              }
+        <form [formGroup]="deliveryForm" (ngSubmit)="createDelivery()">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="personaId" class="form-label">Persona ID *</label>
+                    <input
+                            type="number"
+                            class="form-control"
+                            id="personaId"
+                            formControlName="personId"
+                            placeholder="Ej: 1"
+                            [class.is-invalid]="personId?.invalid && personId?.touched">
+                    @if (personId?.invalid && personId?.touched) {
+                        <div class="invalid-feedback">
+                            @if (personId?.errors?.['required']) {
+                                <small>Persona ID es obligatorio.</small>
+                            }
+                            @if (personId?.errors?.['min']) {
+                                <small>Persona ID debe ser mayor a 0.</small>
+                            }
+                        </div>
+                    }
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="radius" class="form-label">Radio *</label>
+                    <input
+                            type="number"
+                            step="0.1"
+                            class="form-control"
+                            id="radius"
+                            formControlName="radius"
+                            placeholder="Ej: 5.5"
+                            [class.is-invalid]="radius?.invalid && radius?.touched">
+                    @if (radius?.invalid && radius?.touched) {
+                        <div class="invalid-feedback">
+                            @if (radius?.errors?.['required']) {
+                                <small>Radio es obligatorio.</small>
+                            }
+                            @if (radius?.errors?.['min']) {
+                                <small>Radio debe ser mayor a 0.1.</small>
+                            }
+                        </div>
+                    }
+                </div>
             </div>
-          }
-        </div>
-        <div class="col-md-6 mb-3">
-          <label for="radius" class="form-label">Radio *</label>
-          <input
-            type="number"
-            step="0.1"
-            class="form-control"
-            id="radius"
-            formControlName="radius"
-            placeholder="Ej: 5.5"
-            [class.is-invalid]="radius?.invalid && radius?.touched">
-          @if (radius?.invalid && radius?.touched) {
-            <div class="invalid-feedback">
-              @if (radius?.errors?.['required']) {
-                <small>Radio es obligatorio.</small>
-              }
-              @if (radius?.errors?.['min']) {
-                <small>Radio debe ser mayor a 0.1.</small>
-              }
+
+            <div formGroupName="location">
+                <h5 class="mb-3">Ubicación</h5>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="latitude" class="form-label">Latitud *</label>
+                        <input
+                                type="number"
+                                step="any"
+                                class="form-control"
+                                id="latitude"
+                                formControlName="latitude"
+                                placeholder="Ej: -34.611"
+                                [class.is-invalid]="latitude?.invalid && latitude?.touched">
+                        @if (latitude?.invalid && latitude?.touched) {
+                            <div class="invalid-feedback">
+                                @if (latitude?.errors?.['required']) {
+                                    <small>Latitud es obligatoria.</small>
+                                }
+                                @if (latitude?.errors?.['min']) {
+                                    <small>Latitud debe ser mayor o igual a -90.</small>
+                                }
+                                @if (latitude?.errors?.['max']) {
+                                    <small>Latitud debe ser menor o igual a 90.</small>
+                                }
+                            </div>
+                        }
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="longitude" class="form-label">Longitud *</label>
+                        <input
+                                type="number"
+                                step="any"
+                                class="form-control"
+                                id="longitude"
+                                formControlName="longitude"
+                                placeholder="Ej: -58.417"
+                                [class.is-invalid]="longitude?.invalid && longitude?.touched">
+                        @if (longitude?.invalid && longitude?.touched) {
+                            <div class="invalid-feedback">
+                                @if (longitude?.errors?.['required']) {
+                                    <small>Longitud es obligatoria.</small>
+                                }
+                                @if (longitude?.errors?.['min']) {
+                                    <small>Longitud debe ser mayor o igual a -180.</small>
+                                }
+                                @if (longitude?.errors?.['max']) {
+                                    <small>Longitud debe ser menor o igual a 180.</small>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
             </div>
-          }
-        </div>
-      </div>
 
-      <div formGroupName="location">
-        <h5 class="mb-3">Ubicación</h5>
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label for="latitude" class="form-label">Latitud *</label>
-            <input
-              type="number"
-              step="any"
-              class="form-control"
-              id="latitude"
-              formControlName="latitude"
-              placeholder="Ej: -34.611"
-              [class.is-invalid]="latitude?.invalid && latitude?.touched">
-            @if (latitude?.invalid && latitude?.touched) {
-              <div class="invalid-feedback">
-                @if (latitude?.errors?.['required']) {
-                  <small>Latitud es obligatoria.</small>
-                }
-                @if (latitude?.errors?.['min']) {
-                  <small>Latitud debe ser mayor o igual a -90.</small>
-                }
-                @if (latitude?.errors?.['max']) {
-                  <small>Latitud debe ser menor o igual a 90.</small>
-                }
-              </div>
-            }
-          </div>
-          <div class="col-md-6 mb-3">
-            <label for="longitude" class="form-label">Longitud *</label>
-            <input
-              type="number"
-              step="any"
-              class="form-control"
-              id="longitude"
-              formControlName="longitude"
-              placeholder="Ej: -58.417"
-              [class.is-invalid]="longitude?.invalid && longitude?.touched">
-            @if (longitude?.invalid && longitude?.touched) {
-              <div class="invalid-feedback">
-                @if (longitude?.errors?.['required']) {
-                  <small>Longitud es obligatoria.</small>
-                }
-                @if (longitude?.errors?.['min']) {
-                  <small>Longitud debe ser mayor o igual a -180.</small>
-                }
-                @if (longitude?.errors?.['max']) {
-                  <small>Longitud debe ser menor o igual a 180.</small>
-                }
-              </div>
-            }
-          </div>
-        </div>
-      </div>
-
-      <div class="d-flex justify-content-end mt-4">
-        <button type="button" class="btn btn-secondary me-2" (click)="cancelar()">Cancelar</button>
-        <button type="submit" class="btn btn-primary" [disabled]="deliveryForm.invalid">Crear</button>
-      </div>
-    </form>
-  </div>
+            <div class="d-flex justify-content-end mt-4">
+                <button type="button" class="btn btn-secondary me-2" (click)="cancelar()">Cancelar</button>
+                <button type="submit" class="btn btn-primary" [disabled]="deliveryForm.invalid || isLoading">
+                    @if (isLoading) {
+                        <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                        Creando...
+                    } @else {
+                        Crear
+                    }
+                </button>
+            </div>
+        </form>
+    </div>
 </div>

@@ -1,46 +1,76 @@
 <div class="login-container">
+    <div class="login-card">
+        <h1>¡Bienvenido!</h1>
 
-  <div class="login-card">
+        @if (error) {
+            <div class="alert alert-danger">{{ error }}</div>
+        }
 
-    <h1>¡Bienvenido!</h1>
+        <form [formGroup]="loginForm" (ngSubmit)="logIn()">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input
+                        type="email"
+                        id="email"
+                        class="form-control"
+                        formControlName="email"
+                        placeholder="Correo Electrónico"
+                        [class.is-invalid]="email?.invalid && email?.touched">
+                @if (email?.invalid && email?.touched) {
+                    <div class="invalid-feedback">
+                        @if (email?.errors?.['required']) {
+                            <small>El email es obligatorio.</small>
+                        }
+                        @if (email?.errors?.['email']) {
+                            <small>Ingresa un email válido.</small>
+                        }
+                    </div>
+                }
+            </div>
 
-    <form (ngSubmit)="iniciarSesion()">
-
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" class="form-control" placeholder="Correo Electrónico" required>
-      </div>
-
-      <div class="form-group">
-        <label for="password">Contraseña</label>
-        <div class="password-wrapper">
-          <input [type]="showPassword ? 'text' : 'password'" id="password" class="form-control" placeholder="Contraseña" required>
-          <span class="password-icon" (click)="togglePasswordVisibility()">
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <div class="password-wrapper">
+                    <input
+                            [type]="showPassword ? 'text' : 'password'"
+                            id="password"
+                            class="form-control"
+                            formControlName="password"
+                            placeholder="Contraseña"
+                            [class.is-invalid]="password?.invalid && password?.touched">
+                    <span class="password-icon" (click)="togglePasswordVisibility()">
             <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
           </span>
+                    @if (password?.invalid && password?.touched) {
+                        <div class="invalid-feedback">
+                            @if (password?.errors?.['required']) {
+                                <small>La contraseña es obligatoria.</small>
+                            }
+                            @if (password?.errors?.['minlength']) {
+                                <small>La contraseña debe tener al menos 4 caracteres.</small>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-login" [disabled]="loginForm.invalid || isLoading">
+                @if (isLoading) {
+                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                    Iniciando sesión...
+                } @else {
+                    Iniciar Sesión
+                }
+            </button>
+        </form>
+
+        <div class="login-footer">
+            <hr class="line">
+            <div class="text-center mt-3 mb-2" style="font-size: 14px;">
+                <span>Ingrese sus credenciales para acceder a su cuenta.</span><br>
+                <span>¿No tienes una cuenta? <a routerLink="/register" style="color: var(--color-primario); text-decoration: none; font-weight: 600;">Regístrate</a></span>
+            </div>
+            <hr class="line">
         </div>
-      </div>
-
-      <button type="submit" class="btn btn-login">
-        Iniciar Sesión
-      </button>
-
-    </form>
-
-    <!-- Este es el 'login-footer' que ahora contiene el mensaje y el enlace de registro -->
-    <div class="login-footer">
-      <hr class="line">
-      <!-- Contenedor para el texto y el enlace de registro -->
-      <!-- Se añaden clases de Bootstrap 'text-center', 'mt-3' y 'mb-2' para centrar y espaciar -->
-      <div class="text-center mt-3 mb-2" style="font-size: 14px;">
-        <span>Ingrese sus credenciales para acceder a su cuenta.</span><br>
-        <span>¿No tienes una cuenta? <a routerLink="/register" style="color: var(--color-primario); text-decoration: none; font-weight: 600;">Regístrate</a></span>
-      </div>
-      <hr class="line">
     </div>
-
-  </div>
-  <!-- Se eliminaron los div duplicados que estaban fuera del login-card -->
 </div>
-
-
