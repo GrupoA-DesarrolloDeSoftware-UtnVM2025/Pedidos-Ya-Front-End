@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core"
-import { axiosService } from "./axiosClient"
+import { axiosService } from "./axios.service"
 import { config } from "../config/env"
 
 export interface LoginRequest {
