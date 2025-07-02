@@ -2,7 +2,8 @@
 import { Component, OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
 import { RouterLink } from "@angular/router"
-import { DeliveryService, DeliveryDisplayItem, PaginatedDeliveryResponse } from "../../services/api.service"
+import { DeliveryService } from "../../services/api.service"
+import {DeliveryDisplayItem, PaginatedDeliveryResponse} from '../../interfaces/delivery.dto';
 
 // Define el componente Angular con su configuración
 @Component({

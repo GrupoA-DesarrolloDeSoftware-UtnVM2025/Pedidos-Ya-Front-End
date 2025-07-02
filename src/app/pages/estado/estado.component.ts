@@ -3,7 +3,8 @@ import { Component,  OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from "@angular/forms"
 import {  Router, ActivatedRoute} from "@angular/router"
-import { DeliveryService, UpdateDeliveryStatusDto } from "../../services/api.service"
+import { DeliveryService } from "../../services/api.service"
+import {UpdateDeliveryStatusDto} from '../../interfaces/delivery.dto';
 
 //Importar componente del estado del delivery
 @Component({

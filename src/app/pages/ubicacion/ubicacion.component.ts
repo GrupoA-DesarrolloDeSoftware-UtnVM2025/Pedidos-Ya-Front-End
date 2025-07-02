@@ -2,7 +2,8 @@ import { Component, OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from "@angular/forms"
 import { Router, ActivatedRoute} from "@angular/router"
-import { DeliveryService, UpdateDeliveryLocationDto } from "../../services/api.service"
+import { DeliveryService } from "../../services/api.service"
+import {UpdateDeliveryLocationDto} from '../../interfaces/delivery.dto';
 
 @Component({
   selector: "app-ubicacion-form",

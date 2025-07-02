@@ -3,7 +3,8 @@ import { Component } from "@angular/core"
 import { CommonModule } from "@angular/common"
 import { Router } from "@angular/router"
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from "@angular/forms"
-import { DeliveryService, CreateDeliveryDto } from "../../services/api.service"
+import { DeliveryService } from "../../services/api.service"
+import {CreateDeliveryDto} from '../../interfaces/delivery.dto';
 
 // Decorador que define los metadatos del componente
 @Component({

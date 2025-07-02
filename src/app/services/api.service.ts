@@ -1,75 +1,22 @@
 import { Injectable } from "@angular/core"
 import { axiosService } from "./axiosClient"
 import { config } from "../config/env"
+import {
+  CreateDeliveryDto,
+  DeliveryDisplayItem,
+  DeliveryResponse,
+  PaginatedDeliveryResponse, UpdateDeliveryLocationDto, UpdateDeliveryStatusDto
+} from '../interfaces/delivery.dto';
 
-// Interfaces based on DTOs and actual API response
-export interface LocationDto {
-  latitude: number
-  longitude: number
-}
-
-export interface CreateDeliveryDto {
-  personId: number
-  location: LocationDto
-  radius: number
-}
-
-export interface UpdateDeliveryLocationDto {
-  location: LocationDto
-}
-
-export interface UpdateDeliveryStatusDto {
-  status: string
-}
 
 export interface PaginationDto {
   limit?: number
   offset?: number
 }
 
-export interface ZoneResponse {
-  id: number
-  name: string
-  location: LocationDto
-  radius: number
-}
-
-export interface DeliveryResponse {
-  id: number
-  personId: number
-  location: LocationDto
-  radius: number
-  status: string
-  zones: ZoneResponse[]
-}
-
-// For display purposes, we'll flatten the structure
-export interface DeliveryDisplayItem {
-  id: number
-  personId: number
-  latitude: number
-  longitude: number
-  radius: number
-  status: string
-  nombreZona: string
-  zones: ZoneResponse[]
-}
-
-// Remove the GetDeliveriesResponse interface entirely and replace with:
 export interface ApiDeliveriesResponse {
   deliveries: DeliveryResponse[]
   total: number
-}
-
-// Keep the existing interfaces: LocationDto, CreateDeliveryDto, UpdateDeliveryLocationDto, UpdateDeliveryStatusDto, PaginationDto, ZoneResponse, DeliveryResponse, DeliveryDisplayItem, PaginatedDeliveryResponse
-
-export interface PaginatedDeliveryResponse {
-  data: DeliveryDisplayItem[]
-  total: number
-  limit: number
-  offset: number
-  totalPages: number
-  currentPage: number
 }
 
 @Injectable({
