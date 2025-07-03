@@ -8,7 +8,7 @@ const axiosService = axios.create({
   },
 })
 
-// Flag to prevent multiple refresh attempts
+
 let isRefreshing = false
 let failedQueue: Array<{
   resolve: (value?: any) => void
@@ -26,30 +26,29 @@ const processQueue = (error: any, token: string | null = null) => {
   failedQueue = []
 }
 
-// URLs that should not trigger token refresh logic
+
 const AUTH_ENDPOINTS = [config.urls.logIn, config.urls.register, config.urls.refreshAccessToken]
 
-// Function to check if the request is to an auth endpoint
+
 const isAuthEndpoint = (url: string): boolean => {
   return AUTH_ENDPOINTS.some((endpoint) => url.includes(endpoint))
 }
 
-// Function to check if token needs refresh based on timestamp
 const checkTokenExpiration = (): boolean => {
   const tokenCreatedAt = localStorage.getItem("token_created_at")
   if (!tokenCreatedAt) {
-    return true // No timestamp, consider expired
+    return true
   }
 
   const createdTime = Number.parseInt(tokenCreatedAt)
   const currentTime = new Date().getTime()
   const timeDifference = currentTime - createdTime
-  const TOKEN_EXPIRY_TIME = 15 * 60 * 1000 // 15 minutes
+  const TOKEN_EXPIRY_TIME = 15 * 60 * 1000 // 15 minutos
 
   return timeDifference >= TOKEN_EXPIRY_TIME
 }
 
-// Function to refresh token proactively
+
 const refreshTokenProactively = async (): Promise<string | null> => {
   const refreshToken = localStorage.getItem("refresh_token")
   if (!refreshToken) {
@@ -65,7 +64,7 @@ const refreshTokenProactively = async (): Promise<string | null> => {
 
     const { accessToken, refreshToken: newRefreshToken } = response.data
 
-    // Save new tokens with timestamp
+
     const now = new Date().getTime()
     localStorage.setItem("access_token", accessToken)
     localStorage.setItem("refresh_token", newRefreshToken)
@@ -79,18 +78,18 @@ const refreshTokenProactively = async (): Promise<string | null> => {
   }
 }
 
-// Interceptor to add token and check expiration before each request
+
 axiosService.interceptors.request.use(
   async (config) => {
     const requestUrl = config.url || ""
 
-    // Skip token logic for auth endpoints
+
     if (isAuthEndpoint(requestUrl)) {
       console.log("Skipping token check for auth endpoint:", requestUrl)
       return config
     }
 
-    // Check if we have tokens before proceeding
+
     const accessToken = localStorage.getItem("access_token")
     const refreshToken = localStorage.getItem("refresh_token")
 
@@ -99,12 +98,12 @@ axiosService.interceptors.request.use(
       return config
     }
 
-    // Check if token is expired before making the request
+
     if (checkTokenExpiration()) {
       console.log("Token expired, refreshing before request...")
 
       if (isRefreshing) {
-        // If already refreshing, wait for it to complete
+
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject })
         }).then(() => {
@@ -128,7 +127,7 @@ axiosService.interceptors.request.use(
       } catch (error) {
         processQueue(error, null)
 
-        // Clear tokens and redirect to login
+
         localStorage.removeItem("access_token")
         localStorage.removeItem("refresh_token")
         localStorage.removeItem("token_created_at")
@@ -142,7 +141,7 @@ axiosService.interceptors.request.use(
         isRefreshing = false
       }
     } else {
-      // Token is still valid, add it to headers
+
       if (accessToken) {
         config.headers.Authorization = `Bearer ${accessToken}`
       }
@@ -155,7 +154,7 @@ axiosService.interceptors.request.use(
   },
 )
 
-// Response interceptor for handling 401 errors (fallback)
+
 axiosService.interceptors.response.use(
   (response) => {
     return response
@@ -164,12 +163,12 @@ axiosService.interceptors.response.use(
     const originalRequest = error.config
     const requestUrl = originalRequest.url || ""
 
-    // Skip 401 handling for auth endpoints
+
     if (isAuthEndpoint(requestUrl)) {
       return Promise.reject(error)
     }
 
-    // Handle 401 errors as fallback (shouldn't happen often with proactive refresh)
+
     if (error.response?.status === 401 && !originalRequest._retry) {
       console.log("Received 401 error, attempting token refresh...")
 

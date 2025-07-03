@@ -25,14 +25,14 @@ export interface RefreshTokenRequest {
   providedIn: "root",
 })
 export class AuthService {
-  private readonly TOKEN_EXPIRY_TIME = 15 * 60 * 1000 // 15 minutes in milliseconds
+  private readonly TOKEN_EXPIRY_TIME = 15 * 60 * 1000 // 15 miutos en milisegundos
   private readonly ACCESS_TOKEN_KEY = "access_token"
   private readonly REFRESH_TOKEN_KEY = "refresh_token"
   private readonly TOKEN_CREATED_AT_KEY = "token_created_at"
   private tokenCheckInterval: any = null
 
   constructor() {
-    // Start periodic token checking when service is initialized
+
     this.startPeriodicTokenCheck()
   }
 
@@ -40,10 +40,10 @@ export class AuthService {
     try {
       const response = await axiosService.post<AuthResponse>(config.urls.logIn, credentials)
 
-      // Save tokens and creation timestamp
+
       this.saveTokens(response.data.accessToken, response.data.refreshToken)
 
-      // Start periodic checking after login
+
       this.startPeriodicTokenCheck()
 
       return response.data
@@ -57,10 +57,10 @@ export class AuthService {
     try {
       const response = await axiosService.post<AuthResponse>(config.urls.register, userData)
 
-      // Save tokens and creation timestamp
+
       this.saveTokens(response.data.accessToken, response.data.refreshToken)
 
-      // Start periodic checking after register
+
       this.startPeriodicTokenCheck()
 
       return response.data
@@ -79,12 +79,12 @@ export class AuthService {
 
       console.log("Refreshing access token...")
 
-      // Send refresh token in request body
+
       const response = await axiosService.get<AuthResponse>(config.urls.refreshAccessToken, {
         headers: {'refresh-token': refreshToken}
       })
 
-      // Save new tokens and update creation timestamp
+
       this.saveTokens(response.data.accessToken, response.data.refreshToken)
 
       console.log("Access token refreshed successfully")
@@ -97,21 +97,21 @@ export class AuthService {
     }
   }
 
-  // Start periodic token checking every 5 minutes
+
   private startPeriodicTokenCheck(): void {
-    // Clear existing interval if any
+
     if (this.tokenCheckInterval) {
       clearInterval(this.tokenCheckInterval)
     }
 
-    // Check every 5 minutes (300,000 ms)
+
     this.tokenCheckInterval = setInterval(
       () => {
         if (this.isAuthenticated()) {
           const remainingTime = this.getTokenRemainingTime()
           console.log(`Token check: ${remainingTime} minutes remaining`)
 
-          // If token expires in less than 2 minutes, refresh it proactively
+
           if (remainingTime <= 2) {
             console.log("Token expiring soon, refreshing proactively...")
             this.refreshToken().catch((error) => {
@@ -121,10 +121,10 @@ export class AuthService {
         }
       },
       5 * 60 * 1000,
-    ) // 5 minutes
+    )
   }
 
-  // Stop periodic token checking
+
   private stopPeriodicTokenCheck(): void {
     if (this.tokenCheckInterval) {
       clearInterval(this.tokenCheckInterval)
@@ -132,7 +132,7 @@ export class AuthService {
     }
   }
 
-  // Check if token needs refresh and refresh if necessary
+
   async checkAndRefreshTokenIfNeeded(): Promise<boolean> {
     if (!this.isAuthenticated()) {
       return false
@@ -151,7 +151,7 @@ export class AuthService {
     return true
   }
 
-  // Save tokens with current timestamp
+
   private saveTokens(accessToken: string, refreshToken: string): void {
     const now = new Date().getTime()
     localStorage.setItem(this.ACCESS_TOKEN_KEY, accessToken)
@@ -161,11 +161,11 @@ export class AuthService {
     console.log(`Tokens saved at: ${new Date(now).toLocaleTimeString()}`)
   }
 
-  // Check if 15 minutes have passed since token creation
+
   private isTokenExpired(): boolean {
     const tokenCreatedAt = localStorage.getItem(this.TOKEN_CREATED_AT_KEY)
     if (!tokenCreatedAt) {
-      return true // If no timestamp, consider expired
+      return true
     }
 
     const createdTime = Number.parseInt(tokenCreatedAt)
@@ -175,7 +175,7 @@ export class AuthService {
     return timeDifference >= this.TOKEN_EXPIRY_TIME
   }
 
-  // Get remaining time before token expires (in minutes)
+
   getTokenRemainingTime(): number {
     const tokenCreatedAt = localStorage.getItem(this.TOKEN_CREATED_AT_KEY)
     if (!tokenCreatedAt) {
@@ -187,10 +187,10 @@ export class AuthService {
     const timeDifference = currentTime - createdTime
     const remainingTime = this.TOKEN_EXPIRY_TIME - timeDifference
 
-    return Math.max(0, Math.floor(remainingTime / 1000 / 60)) // Return minutes
+    return Math.max(0, Math.floor(remainingTime / 1000 / 60))
   }
 
-  // Get token creation time as readable string
+
   getTokenCreatedAt(): string {
     const tokenCreatedAt = localStorage.getItem(this.TOKEN_CREATED_AT_KEY)
     if (!tokenCreatedAt) {
@@ -202,7 +202,7 @@ export class AuthService {
   }
 
   logout(): void {
-    // Stop periodic checking
+
     this.stopPeriodicTokenCheck()
 
     localStorage.removeItem(this.ACCESS_TOKEN_KEY)
@@ -224,7 +224,7 @@ export class AuthService {
     return localStorage.getItem(this.REFRESH_TOKEN_KEY)
   }
 
-  // Decodificar JWT para obtener información del usuario
+
   getUserFromToken(): any {
     const token = this.getAccessToken()
     if (!token) return null

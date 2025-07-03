@@ -35,7 +35,7 @@ export class DeliveryService {
 
       const { deliveries, total } = response.data
 
-      // Transform deliveries to display format
+
       const transformedDeliveries: DeliveryDisplayItem[] = deliveries.map((delivery) => ({
         id: delivery.id,
         personId: delivery.personId,
@@ -79,7 +79,7 @@ export class DeliveryService {
       const response = await axiosService.post<DeliveryResponse>(config.urls.createDelivery, deliveryData)
       return response.data
     } catch (error: any) {
-      // More specific error messages
+
       if (error.response?.status === 400) {
         throw new Error(`Error de validación: ${error.response.data?.message || "Datos inválidos"}`)
       } else if (error.response?.status === 401) {
