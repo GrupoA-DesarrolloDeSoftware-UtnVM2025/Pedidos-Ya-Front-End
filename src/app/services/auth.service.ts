@@ -191,15 +191,6 @@ export class AuthService {
   }
 
 
-  getTokenCreatedAt(): string {
-    const tokenCreatedAt = localStorage.getItem(this.TOKEN_CREATED_AT_KEY)
-    if (!tokenCreatedAt) {
-      return "Unknown"
-    }
-
-    const createdTime = Number.parseInt(tokenCreatedAt)
-    return new Date(createdTime).toLocaleString()
-  }
 
   logout(): void {
 
@@ -219,11 +210,6 @@ export class AuthService {
   getAccessToken(): string | null {
     return localStorage.getItem(this.ACCESS_TOKEN_KEY)
   }
-
-  getRefreshToken(): string | null {
-    return localStorage.getItem(this.REFRESH_TOKEN_KEY)
-  }
-
 
   getUserFromToken(): any {
     const token = this.getAccessToken()
