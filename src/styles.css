@@ -1,4 +1,12 @@
+/*archivo de CSS global,Define estilos básicos para todo el sitio, especialmente para el body y html*/
+/* Elimina márgenes/paddings por defecto
 
+Fija altura completa del body
+
+Aplica una fuente tipográfica moderna y universal
+
+Configura un fondo visual atractivo y dinámico usando gradientes complejos
+*/
 body, html {
   margin: 0;
   padding: 0;

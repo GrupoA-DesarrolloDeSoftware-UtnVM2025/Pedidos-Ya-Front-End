@@ -1,3 +1,4 @@
+/* sirve para testear que el componente haga lo que debe hacer.*/
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DeliveryComponent } from './delivery.component';

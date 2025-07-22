@@ -1,3 +1,7 @@
+/* los archivos de component.css Aplica estilos visuales al componente: colores, tamaños, márgenes, bordes, tipografías, etc.
+
+Encapsula los estilos: Angular aplica un mecanismo llamado View Encapsulation para que los estilos del archivo .css afecten únicamente a ese componente, sin modificar otros componentes ni el estilo global de la aplicación.
+*/
 .btn-nuevo {
   background-color: #6f42c1;
   color: white;

@@ -1,11 +1,18 @@
-// Importacion de decoradores y funcionalidades principales de Angular entre otras cosas
+/* Es un archivo TypeScript que:
+
+-Declara el componente Angular
+-Define las propiedades (variables) que el HTML puede usar
+-Contiene métodos (funciones) que responden a eventos (clicks, cambios, formularios)
+-Se comunica con servicios, APIs, formularios, rutas, etc
+*/
+/* Importacion de decoradores y funcionalidades principales de Angular entre otras cosas */
 import { Component, OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
 import { RouterLink } from "@angular/router"
 import { DeliveryService } from "../../services/api.service"
 import {DeliveryDisplayItem, PaginatedDeliveryResponse} from '../../interfaces/delivery.dto';
 
-// Define el componente Angular con su configuración
+/* Define el componente Angular con su configuración*/
 @Component({
   selector: "app-delivery", // Selector HTML para usar el componente
   standalone: true,         // Indica que es un componente independiente (no parte de un módulo)
@@ -15,10 +22,10 @@ import {DeliveryDisplayItem, PaginatedDeliveryResponse} from '../../interfaces/d
 })
 
 export class DeliveryComponent implements OnInit {
-  // Array para almacenar las entregas recibidas del servicio
+  /* Array para almacenar las entregas recibidas del servicio*/
   deliveries: DeliveryDisplayItem[] = []
 
-  // Estado de carga y errores
+  /* Estado de carga y errores*/
   isLoading = false
   error = ""
 

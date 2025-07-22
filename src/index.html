@@ -1,13 +1,14 @@
+/* Es la plantilla base que el navegador carga cuando accede a tu aplicación. Angular luego se encarga de "inyectar" tu aplicación dentro de él.*/
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <title>PedidosYa</title>
-  <base href="/">
+  <base href="/"> /*Le dice que la app trabaja desde la raíz (/) del sitio.*/
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
-  <app-root></app-root>
+  <app-root></app-root> /*Este es el componente raíz de tu app Angular. Cuando Angular arranca, reemplaza ese elemento con lo que se define en AppComponent*/
 </body>
 </html>
